@@ -100,7 +100,7 @@ function FormBuilder() {
     setDraggedIndex(index)
   }
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
   }
@@ -182,7 +182,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -211,7 +211,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -229,7 +229,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -247,7 +247,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -265,7 +265,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -283,7 +283,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -301,7 +301,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -322,7 +322,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -344,7 +344,7 @@ function FormBuilder() {
             className={`${baseClasses} space-field`}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -361,7 +361,7 @@ function FormBuilder() {
             className={`${baseClasses} divider-field`}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -378,7 +378,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
@@ -396,7 +396,7 @@ function FormBuilder() {
             className={baseClasses}
             draggable
             onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
+            onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             onClick={() => setSelectedComponent(component.id)}
