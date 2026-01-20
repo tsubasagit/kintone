@@ -50,9 +50,11 @@ function FormBuilder() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const appId = searchParams.get('id')
+  const packId = searchParams.get('pack')
   const [appName, setAppName] = useState('新しいアプリ')
   const [formComponents, setFormComponents] = useState<FormComponentLocal[]>([])
   const [selectedComponent, setSelectedComponent] = useState<string | null>(null)
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
 
   useEffect(() => {
     if (appId) {
@@ -61,8 +63,21 @@ function FormBuilder() {
         setAppName(app.name)
         setFormComponents(app.formComponents as FormComponentLocal[])
       }
+    } else if (packId === 'customer') {
+      // 顧客パックの初期コンポーネントを設定
+      setAppName('顧客リスト')
+      const customerComponents: FormComponentLocal[] = [
+        { id: 'company-name', type: 'text', label: '会社名' },
+        { id: 'contact-name', type: 'text', label: '担当者名' },
+        { id: 'email', type: 'text', label: 'メールアドレス' },
+        { id: 'phone', type: 'text', label: '電話番号' },
+        { id: 'address', type: 'textarea', label: '住所' },
+        { id: 'industry', type: 'select', label: '業種' },
+        { id: 'created-date', type: 'created-date', label: '作成日時' }
+      ]
+      setFormComponents(customerComponents)
     }
-  }, [appId])
+  }, [appId, packId])
 
   const handleAddComponent = (component: ComponentDefinition) => {
     const newComponent: FormComponent = {
@@ -79,6 +94,31 @@ function FormBuilder() {
     if (selectedComponent === id) {
       setSelectedComponent(null)
     }
+  }
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index)
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+    if (draggedIndex === null || draggedIndex === dropIndex) return
+
+    const newComponents = [...formComponents]
+    const draggedItem = newComponents[draggedIndex]
+    newComponents.splice(draggedIndex, 1)
+    newComponents.splice(dropIndex, 0, draggedItem)
+    setFormComponents(newComponents)
+    setDraggedIndex(null)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null)
   }
 
   const handleSave = () => {
@@ -125,20 +165,40 @@ function FormBuilder() {
     }
   }
 
-  const renderComponent = (component: FormComponent) => {
-    const baseClasses = `form-field ${selectedComponent === component.id ? 'selected' : ''}`
+  const renderComponent = (component: FormComponentLocal, index: number) => {
+    const baseClasses = `form-field ${selectedComponent === component.id ? 'selected' : ''} ${draggedIndex === index ? 'dragging' : ''}`
     
     switch (component.type) {
       case 'label':
         return (
-          <div key={component.id} className={baseClasses} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <label className="field-label">{component.label}</label>
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
           </div>
         )
       case 'text':
         return (
-          <div key={component.id} className={baseClasses} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <label className="field-label">{component.label}</label>
             <input type="text" className="field-input" placeholder="入力してください" />
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
@@ -146,7 +206,17 @@ function FormBuilder() {
         )
       case 'textarea':
         return (
-          <div key={component.id} className={baseClasses} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <label className="field-label">{component.label}</label>
             <textarea className="field-textarea" placeholder="入力してください" rows={3}></textarea>
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
@@ -154,7 +224,17 @@ function FormBuilder() {
         )
       case 'number':
         return (
-          <div key={component.id} className={baseClasses} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <label className="field-label">{component.label}</label>
             <input type="number" className="field-input" placeholder="0" />
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
@@ -162,7 +242,17 @@ function FormBuilder() {
         )
       case 'date':
         return (
-          <div key={component.id} className={baseClasses} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <label className="field-label">{component.label}</label>
             <input type="date" className="field-input" />
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
@@ -170,7 +260,17 @@ function FormBuilder() {
         )
       case 'datetime':
         return (
-          <div key={component.id} className={baseClasses} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <label className="field-label">{component.label}</label>
             <input type="datetime-local" className="field-input" />
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
@@ -178,39 +278,112 @@ function FormBuilder() {
         )
       case 'time':
         return (
-          <div key={component.id} className={baseClasses} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <label className="field-label">{component.label}</label>
             <input type="time" className="field-input" />
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
           </div>
         )
       case 'select':
+        const industryOptions = component.label === '業種' 
+          ? ['----', 'IT・ソフトウェア', '製造業', '建設業', '小売業', 'サービス業', '金融業', 'その他']
+          : ['----']
         return (
-          <div key={component.id} className={baseClasses} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <label className="field-label">{component.label}</label>
             <select className="field-select">
-              <option>----</option>
+              {industryOptions.map((option, i) => (
+                <option key={i}>{option}</option>
+              ))}
             </select>
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
           </div>
         )
       case 'space':
         return (
-          <div key={component.id} className={`${baseClasses} space-field`} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={`${baseClasses} space-field`}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <div className="space-indicator">スペース</div>
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
           </div>
         )
       case 'divider':
         return (
-          <div key={component.id} className={`${baseClasses} divider-field`} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={`${baseClasses} divider-field`}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <hr />
+            <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
+          </div>
+        )
+      case 'created-date':
+        return (
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
+            <label className="field-label">{component.label}</label>
+            <input type="datetime-local" className="field-input" disabled />
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
           </div>
         )
       default:
         return (
-          <div key={component.id} className={baseClasses} onClick={() => setSelectedComponent(component.id)}>
+          <div
+            key={component.id}
+            className={baseClasses}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={() => setSelectedComponent(component.id)}
+          >
+            <div className="drag-handle">⋮⋮</div>
             <label className="field-label">{component.label}</label>
             <div className="field-placeholder">{component.type} フィールド</div>
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
@@ -269,7 +442,7 @@ function FormBuilder() {
             </div>
           ) : (
             <div className="form-fields">
-              {formComponents.map(renderComponent)}
+              {formComponents.map((component, index) => renderComponent(component, index))}
             </div>
           )}
         </div>

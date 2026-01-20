@@ -166,9 +166,11 @@
   position: relative;
   margin-bottom: 20px;
   padding: 12px;
+  padding-left: 40px;
   border: 2px solid transparent;
   border-radius: 4px;
   transition: all 0.2s;
+  cursor: move;
 }
 
 .form-field:hover {
@@ -178,6 +180,26 @@
 .form-field.selected {
   border-color: #3498db;
   background-color: #f0f7ff;
+}
+
+.form-field.dragging {
+  opacity: 0.5;
+}
+
+.drag-handle {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 16px;
+  cursor: grab;
+  user-select: none;
+  line-height: 1;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
 }
 
 .field-label {

@@ -89,7 +89,11 @@ function TemplateSelection() {
   }
 
   const handleAppPackSelect = (packId: string) => {
-    alert(`${packId}パックの機能は実装予定です`)
+    if (packId === 'customer') {
+      navigate('/form-builder?pack=customer')
+    } else {
+      alert(`${packId}パックの機能は実装予定です`)
+    }
   }
 
   const handleOpenApp = (appId: string) => {
