@@ -121,6 +121,12 @@ function FormBuilder() {
     setDraggedIndex(null)
   }
 
+  const handleLabelChange = (id: string, newLabel: string) => {
+    setFormComponents(formComponents.map(comp => 
+      comp.id === id ? { ...comp, label: newLabel } : comp
+    ))
+  }
+
   const handleSave = () => {
     const finalAppId = appId || `app-${Date.now()}`
     const appData: AppData = {
@@ -182,7 +188,19 @@ function FormBuilder() {
             onClick={() => setSelectedComponent(component.id)}
           >
             <div className="drag-handle">⋮⋮</div>
-            <label className="field-label">{component.label}</label>
+            {selectedComponent === component.id ? (
+              <input
+                type="text"
+                className="label-edit-input"
+                value={component.label}
+                onChange={(e) => handleLabelChange(component.id, e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                onBlur={() => setSelectedComponent(null)}
+                autoFocus
+              />
+            ) : (
+              <label className="field-label">{component.label}</label>
+            )}
             <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteComponent(component.id) }}>×</button>
           </div>
         )

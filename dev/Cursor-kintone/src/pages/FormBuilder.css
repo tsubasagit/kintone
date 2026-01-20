@@ -210,6 +210,23 @@
   margin-bottom: 8px;
 }
 
+.label-edit-input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 2px solid #3498db;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #fff;
+  margin-bottom: 8px;
+}
+
+.label-edit-input:focus {
+  outline: none;
+  border-color: #2980b9;
+}
+
 .field-input,
 .field-textarea,
 .field-select {
