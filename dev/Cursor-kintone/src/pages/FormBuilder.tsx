@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import './FormBuilder.css'
+import { getApp, saveApp, type AppData, type FormComponent } from '../utils/storage'
 
-interface FormComponent {
+interface FormComponentLocal {
   id: string
   type: string
   label: string
@@ -45,8 +47,22 @@ const availableComponents: ComponentDefinition[] = [
 ]
 
 function FormBuilder() {
-  const [formComponents, setFormComponents] = useState<FormComponent[]>([])
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const appId = searchParams.get('id')
+  const [appName, setAppName] = useState('新しいアプリ')
+  const [formComponents, setFormComponents] = useState<FormComponentLocal[]>([])
   const [selectedComponent, setSelectedComponent] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (appId) {
+      const app = getApp(appId)
+      if (app) {
+        setAppName(app.name)
+        setFormComponents(app.formComponents as FormComponentLocal[])
+      }
+    }
+  }, [appId])
 
   const handleAddComponent = (component: ComponentDefinition) => {
     const newComponent: FormComponent = {
@@ -62,6 +78,50 @@ function FormBuilder() {
     setFormComponents(formComponents.filter(comp => comp.id !== id))
     if (selectedComponent === id) {
       setSelectedComponent(null)
+    }
+  }
+
+  const handleSave = () => {
+    const finalAppId = appId || `app-${Date.now()}`
+    const appData: AppData = {
+      id: finalAppId,
+      name: appName,
+      formComponents: formComponents as FormComponent[],
+      settings: {},
+      createdAt: appId ? getApp(finalAppId)?.createdAt || new Date().toISOString() : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+    saveApp(appData)
+    alert('アプリを保存しました！')
+  }
+
+  const handlePublish = () => {
+    if (formComponents.length === 0) {
+      alert('フォームにコンポーネントを追加してください')
+      return
+    }
+    
+    const appNameInput = prompt('アプリ名を入力してください:', appName)
+    if (!appNameInput) return
+    
+    setAppName(appNameInput)
+    const finalAppId = appId || `app-${Date.now()}`
+    const appData: AppData = {
+      id: finalAppId,
+      name: appNameInput,
+      formComponents: formComponents as FormComponent[],
+      settings: {},
+      createdAt: appId ? getApp(finalAppId)?.createdAt || new Date().toISOString() : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+    saveApp(appData)
+    alert('アプリを公開しました！')
+    navigate('/')
+  }
+
+  const handleCancel = () => {
+    if (confirm('作成を中止しますか？')) {
+      navigate('/')
     }
   }
 
@@ -164,7 +224,14 @@ function FormBuilder() {
       <div className="builder-sidebar">
         <div className="sidebar-section">
           <h3 className="sidebar-title">フォームを保存</h3>
-          <button className="save-button">保存</button>
+          <input
+            type="text"
+            value={appName}
+            onChange={(e) => setAppName(e.target.value)}
+            className="app-name-input"
+            placeholder="アプリ名"
+          />
+          <button className="save-button" onClick={handleSave}>保存</button>
         </div>
         
         <div className="sidebar-section">
@@ -190,8 +257,8 @@ function FormBuilder() {
           <h2>フォーム</h2>
           <div className="canvas-actions">
             <button className="action-button">アプリ作成ガイド</button>
-            <button className="action-button">作成を中止</button>
-            <button className="action-button primary">アプリを公開</button>
+            <button className="action-button" onClick={handleCancel}>作成を中止</button>
+            <button className="action-button primary" onClick={handlePublish}>アプリを公開</button>
           </div>
         </div>
         

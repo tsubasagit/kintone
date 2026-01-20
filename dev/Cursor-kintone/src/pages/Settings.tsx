@@ -83,7 +83,7 @@ const settingSections: SettingSection[] = [
 ]
 
 function Settings() {
-  const [hasChanges, setHasChanges] = useState(false)
+  const [hasChanges] = useState(false)
 
   const handleSettingClick = (sectionId: string, itemId: string) => {
     alert(`${sectionId} > ${itemId} の設定画面は実装予定です`)

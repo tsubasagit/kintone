@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './TemplateSelection.css'
 
@@ -70,9 +70,15 @@ const appPacks = [
   }
 ]
 
+import { getApps, deleteApp, type AppData } from '../utils/storage'
+
 function TemplateSelection() {
   const navigate = useNavigate()
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [savedApps, setSavedApps] = useState<AppData[]>([])
+
+  useEffect(() => {
+    setSavedApps(getApps())
+  }, [])
 
   const handleTemplateSelect = (templateId: string) => {
     if (templateId === 'blank') {
@@ -84,6 +90,18 @@ function TemplateSelection() {
 
   const handleAppPackSelect = (packId: string) => {
     alert(`${packId}パックの機能は実装予定です`)
+  }
+
+  const handleOpenApp = (appId: string) => {
+    navigate(`/form-builder?id=${appId}`)
+  }
+
+  const handleDeleteApp = (appId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (confirm('このアプリを削除しますか？')) {
+      deleteApp(appId)
+      setSavedApps(getApps())
+    }
   }
 
   return (
@@ -103,6 +121,33 @@ function TemplateSelection() {
             </div>
           ))}
         </div>
+
+        {savedApps.length > 0 && (
+          <>
+            <h2 className="section-title">保存されたアプリ</h2>
+            <div className="saved-apps-grid">
+              {savedApps.map((app) => (
+                <div
+                  key={app.id}
+                  className="saved-app-card"
+                  onClick={() => handleOpenApp(app.id)}
+                >
+                  <h3 className="saved-app-name">{app.name}</h3>
+                  <p className="saved-app-info">
+                    コンポーネント数: {app.formComponents.length} | 
+                    更新日: {new Date(app.updatedAt).toLocaleDateString('ja-JP')}
+                  </p>
+                  <button
+                    className="delete-app-button"
+                    onClick={(e) => handleDeleteApp(app.id, e)}
+                  >
+                    削除
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         <h2 className="section-title">おすすめのアプリ</h2>
         
