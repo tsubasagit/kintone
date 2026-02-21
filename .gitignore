@@ -1,0 +1,46 @@
+# ============================================
+# AppTalentHub Company Filesystem .gitignore
+# ============================================
+
+# --- Independent repos (have their own .git) ---
+# Prototypes
+02_product/00_prototypes/claude_grant_pilot/
+02_product/00_prototypes/cursor_park_test/
+02_product/00_prototypes/gitbiz/
+02_product/00_prototypes/art_voice/
+
+# Projects with own repos
+02_product/01_projects/markshot/
+02_product/01_projects/today_google_calendar/
+02_product/01_projects/apptalenthub_wp/
+
+# Published content with own repos
+03_contents/02_published/lp/
+03_contents/02_published/comics(行政バグ)/
+
+# --- Legacy (to be cleaned up) ---
+dev/
+
+# --- Build artifacts ---
+node_modules/
+.next/
+dist/
+build/
+*.tsbuildinfo
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+*.log
+.tmb/
+desktop.ini
+
+# --- Secrets ---
+.env
+.env.*
+
+# --- Large binary files ---
+*.HEIC
+*.mp4
+*.zip
+*.tar.gz
